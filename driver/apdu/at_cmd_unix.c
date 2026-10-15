@@ -201,7 +201,7 @@ int at_setup_userdata(struct at_userdata **userdata) {
 
     memset(*userdata, 0, sizeof(struct at_userdata));
     (*userdata)->wall = get_current_clock(CLOCK_MONOTONIC);
-    (*userdata)->default_device = "/dev/sttt_lte30";
+    (*userdata)->default_device = "/dev/stty_lte30";
     (*userdata)->fd = -1;
     (*userdata)->channels = calloc(AT_MAX_LOGICAL_CHANNELS + 1, sizeof(char *));
     if ((*userdata)->channels == NULL) {
