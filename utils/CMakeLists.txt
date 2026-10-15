@@ -1,5 +1,7 @@
-add_library(lpac-utils SHARED lpac/utils.c)
-install(TARGETS lpac-utils LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+add_library(lpac-utils ${LPAC_LIB_TYPE} lpac/utils.c)
+if (NOT LPAC_STATIC_DRIVERS)
+    install(TARGETS lpac-utils LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
+endif ()
 target_link_libraries(lpac-utils PUBLIC ${CJSON_LIBRARY} cjson-ext euicc)
 target_compile_options(lpac-utils PRIVATE -Wall -Wextra)
 

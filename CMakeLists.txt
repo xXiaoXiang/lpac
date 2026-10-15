@@ -15,6 +15,14 @@ option(STANDALONE_MODE "All things in a relocatable directory" OFF)
 option(LPAC_DYNAMIC_LIBEUICC "Build and install libeuicc as a dynamic library" ON)
 
 option(LPAC_BUILD_LIBEUICC_ONLY "Only build libeuicc" OFF)
+option(LPAC_STATIC_DRIVERS "Link stdio/AT/curl drivers into lpac instead of dlopen (single-file build)" OFF)
+
+if (LPAC_STATIC_DRIVERS)
+    set(LPAC_LIB_TYPE STATIC)
+    set(LPAC_DYNAMIC_LIBEUICC OFF)
+else ()
+    set(LPAC_LIB_TYPE SHARED)
+endif ()
 
 set(LPAC_CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
 list(APPEND CMAKE_MODULE_PATH ${LPAC_CMAKE_MODULE_PATH})
@@ -84,6 +92,10 @@ if(WIN32)
 else()
     set(DL_LIBRARY dl)
 endif()
+
+if (LPAC_STATIC_DRIVERS)
+    set(DL_LIBRARY "")
+endif ()
 
 if (USE_SYSTEM_DEPS)
     find_package(cJSON REQUIRED)

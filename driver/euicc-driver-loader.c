@@ -48,6 +48,9 @@ struct euicc_drivers_list {
 
 static LIST_HEAD(drivers);
 
+#ifdef LPAC_STATIC_DRIVERS
+#    include "static_drivers.h"
+#else
 #if defined(_WIN32)
 static const char *dynlib_suffix = ".dll";
 #elif defined(__APPLE__) && defined(__MACH__)
@@ -238,7 +241,33 @@ static const struct euicc_driver *find_driver_by_path(const char *restrict dir, 
     }
     return driver;
 }
+#endif /* !LPAC_STATIC_DRIVERS */
 
+#ifdef LPAC_STATIC_DRIVERS
+static bool init_driver_list() {
+    if (!list_empty(&drivers)) {
+        return true;
+    }
+    for (size_t i = 0; static_drivers[i] != NULL; i++) {
+        struct euicc_drivers_list *tmp = (struct euicc_drivers_list *)calloc(1, sizeof(struct euicc_drivers_list));
+        if (tmp == NULL) {
+            return false;
+        }
+        tmp->driver = static_drivers[i];
+        list_add_tail(&tmp->list, &drivers);
+    }
+    return true;
+}
+
+static const struct euicc_driver *find_driver_by_name(const enum euicc_driver_type type, const char *name) {
+    for (size_t i = 0; static_drivers[i] != NULL; i++) {
+        if (static_drivers[i]->type == type && strcmp(static_drivers[i]->name, name) == 0) {
+            return static_drivers[i];
+        }
+    }
+    return NULL;
+}
+#else
 static bool init_driver_list() {
     // If driver is not empty, means initialization has been done.
     // But it prevent re-init driver when lpac running.
@@ -291,6 +320,7 @@ static const struct euicc_driver *find_driver_by_name(const enum euicc_driver_ty
     const struct euicc_driver *driver = find_driver_by_path(LPAC_DRIVER_HOME, driver_name);
     return driver;
 }
+#endif /* LPAC_STATIC_DRIVERS */
 
 /**
  * @brief Find driver by fallback order.

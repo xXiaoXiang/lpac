@@ -64,8 +64,15 @@ if(NOT DEFINED LPAC_VERSION)
 endif()
 target_compile_definitions(lpac-lib PRIVATE LPAC_VERSION="${LPAC_VERSION}")
 
-set_target_properties(lpac PROPERTIES
-    BUILD_RPATH "${CMAKE_BINARY_DIR}"
-)
+if (LPAC_STATIC_DRIVERS)
+    set_target_properties(lpac PROPERTIES
+        BUILD_WITH_INSTALL_RPATH TRUE
+        INSTALL_RPATH "\$ORIGIN;\$ORIGIN/lib"
+    )
+else ()
+    set_target_properties(lpac PROPERTIES
+        BUILD_RPATH "${CMAKE_BINARY_DIR}"
+    )
+endif ()
 
 install(TARGETS lpac RUNTIME DESTINATION "${CMAKE_INSTALL_BINDIR}")
