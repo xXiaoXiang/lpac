@@ -339,6 +339,7 @@ static const struct euicc_driver *find_driver_fallback(const enum euicc_driver_t
         NULL
     };
     static const char *apdu_fallback_order[] = {
+        "at",
         "pcsc",
         "stdio",
         NULL

@@ -9,6 +9,9 @@
 #include <unistd.h>
 
 inline void at_warning_message(void) {
+    if (!getenv_or_default(ENV_AT_WARNING, (bool)false))
+        return;
+
     static char *message =
         "WARNING: AT driver is for demo purposes only.\n"
         "WARNING: AT driver strictly complies with \"ETSI TS 127 007\" specification.\n"
